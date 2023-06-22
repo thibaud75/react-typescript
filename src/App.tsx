@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import uuid from "react-uuid";
+import Table from "./components/Table";
+import FormNewEntry from "./components/FormNewEntry";
+import Total from "./components/Total";
+import { ItemsTable } from "./interfaces/Interface";
+
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [entries, setEntries] = useState<ItemsTable[]>([
+    { id: uuid(), name: "Loto ticket", desc: "", price: 20 },
+    { id: uuid(), name: "Beers", desc: "Party night \\o/", price: -15 },
+    { id: uuid(), name: "Phone Bill", desc: "January", price: -29.99 },
+  ]);
+
+  const handleDelete = (id: string) => {
+    setEntries(entries.filter((entry) => entry.id !== id));
+  };
+
+  const handleSubmit = (formData: ItemsTable) => {
+    const newEntry = {
+      id: uuid(),
+      name: formData.name,
+      desc: formData.desc,
+      price: Number(formData.price),
+    };
+    console.log(newEntry);
+    setEntries([...entries, newEntry]);
+  };
 
   return (
     <>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Table entries={entries} onDelete={handleDelete} />
+        <Total entries={entries} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div>
+        <FormNewEntry onSubmit={handleSubmit} />
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
